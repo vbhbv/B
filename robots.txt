@@ -1,0 +1,8 @@
+# يسمح بالزحف لجميع روبوتات محركات البحث
+User-agent: *
+
+# يسمح بالزحف لجميع محتويات الموقع
+Allow: /
+
+# تحديد موقع خارطة الموقع (Sitemap)
+Sitemap: https://vbhbv.github.io/B/sitemap.xml
