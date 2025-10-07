@@ -1,13 +1,42 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // ... (جلب العناصر وزر التوليد)
     const generateButton = document.getElementById('generate-button');
     const promptDisplay = document.getElementById('prompt-display');
-    const jsonFile = 'prompts.json';
+    
+    // تم التعديل هنا: استخدام المسار المطلق للمستودع الفرعي /B/
+    const jsonFile = '/B/prompts.json'; 
     let data = null;
 
-    // ... (وظيفة loadPrompts و getRandomElement تبقى كما هي)
-    async function loadPrompts() { /* ... */ }
-    function getRandomElement(arr) { /* ... */ }
+    // وظيفة لتحميل البيانات من ملف JSON
+    async function loadPrompts() {
+        try {
+            const response = await fetch(jsonFile);
+            
+            // إضافة تحقق إضافي لخطأ 404 أو غيره
+            if (!response.ok) {
+                // قد تكون المشكلة في المسار، جرب المسار النسبي كحل احتياطي
+                const fallbackResponse = await fetch('prompts.json');
+                if (!fallbackResponse.ok) {
+                    throw new Error('فشل في تحميل ملف prompts.json في كلا المسارين.');
+                }
+                data = await fallbackResponse.json();
+                console.log('تم تحميل البيانات بنجاح باستخدام المسار الاحتياطي.');
+                return;
+            }
+            
+            data = await response.json();
+            console.log('تم تحميل البيانات بنجاح.');
+        } catch (error) {
+            promptDisplay.innerHTML = `خطأ: البيانات لم تُحمّل بعد. حاول مرة أخرى. (راجع Console للمزيد)`;
+            console.error('خطأ في جلب/تحليل JSON:', error);
+        }
+    }
+
+    // وظيفة لاختيار عنصر عشوائي (تبقى كما هي)
+    function getRandomElement(arr) {
+        if (!arr || arr.length === 0) return '';
+        const randomIndex = Math.floor(Math.random() * arr.length);
+        return arr[randomIndex];
+    }
 
     // الوظيفة الجديدة لتوليد الأمر الفني الكامل بـ 7 أجزاء
     function generatePrompt() {
@@ -27,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 2. تجميع الأمر النهائي بتسلسل منطقي لغوي مُحكم
         const finalPrompt = 
-            // الموضوع + الفعل
+            // الموضوع + الفعل + المكان
             `${subject} ${action}، ${setting}` +
             // الأسلوب الفني
             `، ${style}` +
@@ -41,7 +70,9 @@ document.addEventListener('DOMContentLoaded', () => {
         promptDisplay.innerHTML = finalPrompt;
     }
 
-    // ... (تحميل البيانات وربط الزر بالوظيفة)
+    // تحميل البيانات عند بدء تشغيل الصفحة
     loadPrompts();
+
+    // ربط الزر بوظيفة التوليد
     generateButton.addEventListener('click', generatePrompt);
 });
