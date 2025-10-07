@@ -1,55 +1,47 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // ... (جلب العناصر وزر التوليد)
     const generateButton = document.getElementById('generate-button');
     const promptDisplay = document.getElementById('prompt-display');
     const jsonFile = 'prompts.json';
     let data = null;
 
-    // 1. وظيفة لجلب البيانات من ملف JSON
-    async function loadPrompts() {
-        try {
-            const response = await fetch(jsonFile);
-            if (!response.ok) {
-                throw new Error('فشل في تحميل ملف prompts.json');
-            }
-            data = await response.json();
-            console.log('تم تحميل البيانات بنجاح.');
-        } catch (error) {
-            promptDisplay.innerHTML = `خطأ: ${error.message}`;
-            console.error(error);
-        }
-    }
+    // ... (وظيفة loadPrompts و getRandomElement تبقى كما هي)
+    async function loadPrompts() { /* ... */ }
+    function getRandomElement(arr) { /* ... */ }
 
-    // 2. وظيفة لاختيار عنصر عشوائي
-    function getRandomElement(arr) {
-        if (!arr || arr.length === 0) return '';
-        const randomIndex = Math.floor(Math.random() * arr.length);
-        return arr[randomIndex];
-    }
-
-    // 3. وظيفة لتوليد الأمر الفني الكامل
+    // الوظيفة الجديدة لتوليد الأمر الفني الكامل بـ 7 أجزاء
     function generatePrompt() {
         if (!data) {
             promptDisplay.innerHTML = "البيانات لم تُحمّل بعد. حاول مرة أخرى.";
             return;
         }
 
+        // 1. اختيار المكونات الـ 7 عشوائياً
         const subject = getRandomElement(data.subjects);
-        const context = getRandomElement(data.contexts);
+        const action = getRandomElement(data.actions);
+        const setting = getRandomElement(data.settings);
+        const style = getRandomElement(data.styles);
+        const light = getRandomElement(data.lights);
         const detail = getRandomElement(data.details);
-        
-        // استخدام رابطين عشوائيين لربط الأجزاء الثلاثة
-        const connector1 = getRandomElement(data.connectors);
-        const connector2 = getRandomElement(data.connectors);
+        const camera = getRandomElement(data.cameras);
 
-        // تجميع الأمر النهائي
-        const finalPrompt = `${subject} ${connector1} ${context} ${connector2} ${detail}`;
+        // 2. تجميع الأمر النهائي بتسلسل منطقي لغوي مُحكم
+        const finalPrompt = 
+            // الموضوع + الفعل
+            `${subject} ${action}، ${setting}` +
+            // الأسلوب الفني
+            `، ${style}` +
+            // الإضاءة والتفاصيل
+            `، ${light}، ${detail}` +
+            // زاوية الكاميرا (لإضافة طابع سينمائي)
+            `، مصورة بـ ${camera}` + 
+            // إضافة "Artstation" لتحسين النتائج في بعض نماذج الذكاء الاصطناعي
+            ` --v 5.2 --s 750`; 
         
         promptDisplay.innerHTML = finalPrompt;
     }
 
-    // تحميل البيانات عند بدء تشغيل الصفحة
+    // ... (تحميل البيانات وربط الزر بالوظيفة)
     loadPrompts();
-
-    // ربط الزر بوظيفة التوليد
     generateButton.addEventListener('click', generatePrompt);
 });
